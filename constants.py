@@ -1,0 +1,2 @@
+VIEWED = '✅'
+NOT_VIEWED = '⬜'
