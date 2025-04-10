@@ -1,7 +1,8 @@
 from typing import Optional
 
-from data import movie_db
-from constants import VIEWED, NOT_VIEWED
+from src.config.constants import VIEWED, NOT_VIEWED
+from src.data import movie_db
+from src.helpers.console_helper import print_movie
 # Movie
 # - title: str
 # - year: int
@@ -39,7 +40,7 @@ def view_movie():
     movie = __find_movie()
     if movie is None:
         return
-    print(movie)
+    print_movie(movie)
 
 
 def update_movie():
