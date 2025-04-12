@@ -2,7 +2,8 @@ from typing import Optional
 
 from src.config.constants import VIEWED, NOT_VIEWED
 from src.data import movie_db
-from src.helpers.console_helper import print_movie
+from src.helpers.movie_helpers import print_movie, save_movies
+from src.helpers.console_helper import get_string, get_int, get_bool
 # Movie
 # - title: str
 # - year: int
@@ -21,17 +22,18 @@ def list_movies():
 
 
 def add_movie():
-    title = input('Título: ')
-    year = input('Año: ')
-    director = input('Director: ')
+    title = get_string('Título: ', accept_blank=False)
+    year = get_int('Año: ', accept_blank=False, min_value=1900)
+    director = get_string('Director: ')
     movie = {
         'title': title,
-        'year': int(year) if year.isnumeric() else 0,
+        'year': year,
         'director': director,
         'synopsis': '',
         'viewed': False,
     }
     movie_db.append(movie)
+    save_movies()
 
 
 def view_movie():
@@ -49,26 +51,29 @@ def update_movie():
     movie = __find_movie()
     if movie is None:
         return
-    new_title = input(f'Nuevo Título [{movie["title"]}]: ')
-    new_year = input(f'Nuevo Año [{movie["year"]}]: ')
-    new_director = input(f'Nuevo Director [{movie["director"]}]: ')
-    new_viewed = input(f'Vista? S/N [{movie["viewed"]}]: ')
-    if new_title:
-        movie['title'] = new_title
-    if new_year:
-        movie['year'] = int(new_year)
-    if new_director:
-        movie['director'] = new_director
-    if new_viewed:
-        movie['viewed'] = True if new_viewed.upper() == 'S' else False
+    view_status = VIEWED if movie['viewed'] else NOT_VIEWED
+    movie['title'] = get_string(f'Nuevo Título [{movie["title"]}]: ') or movie['title']
+    movie['year'] = get_int(f'Nuevo Año [{movie["year"]}]: ') or movie['year']
+    movie['director'] = get_string(f'Nuevo Director [{movie["director"]}]: ') or movie['director']
+    viewed = get_bool(f'Vista? S/N [{view_status}]: ')
+    movie['viewed'] = movie['viewed'] if viewed is None else viewed
+    save_movies()
 
 
 def delete_movie():
     if not __check_if_movies():
         return
     list_movies()
-    option = int(input(f'Elije una pelicula para eliminar [1-{len(movie_db)}]: '))
+    option = get_int(
+        message=f'Elije una pelicula para eliminar [1-{len(movie_db)}]: ',
+        min_value=1,
+        max_value=len(movie_db),
+        accept_blank=True,
+    )
+    if not option:
+        return
     movie_db.pop(option - 1)
+    save_movies()
 
 
 def __check_if_movies():
@@ -80,7 +85,12 @@ def __check_if_movies():
 
 def __find_movie() -> Optional[dict]:
     list_movies()
-    option = int(input(f'Elije una película [1-{len(movie_db)}]: '))
+    option = get_int(
+        message=f'Elije una película [1-{len(movie_db)}]: ',
+        min_value=1,
+        max_value=len(movie_db),
+        accept_blank=False,
+    )
     for index, movie in enumerate(movie_db, start=1):
         if option == index:
             return movie

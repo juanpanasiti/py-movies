@@ -1,4 +1,6 @@
+from pathlib import Path
+
 VIEWED = '✅'
 NOT_VIEWED = '⬜'
 
-COLORS = []
+MOVIES_JSON_FILE = Path('output') / 'movies.json'

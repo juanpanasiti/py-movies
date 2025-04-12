@@ -1,4 +1,5 @@
-from src.helpers.console_helper import clear_console, show_menu  # * Recomendado
+from src.helpers.console_helper import clear_console  # * Recomendado
+from src.helpers.movie_helpers import show_menu
 # from helpers import *  # ! No recomendado
 # from movies import list_movies, add_movie, view_movie, update_movie, delete_movie
 # from controllers import movies_controller as movies
